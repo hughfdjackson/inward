@@ -5,7 +5,7 @@ var I = require('immutable');
 var noop = function(){};
 
 var Route = I.Record({
-    method: 'GET',
+    httpMethod: 'GET',
     path: '',
     handler: noop,
     regex: new RegExp('')
@@ -25,7 +25,7 @@ var Router = function(routes){
 
 Router.prototype.add = function(method, path, handler){
     var route = Route({
-        method: method,
+        httpMethod: method,
         path: path,
         handler: handler,
         regex: pathToRegex(path)
@@ -56,7 +56,9 @@ var pathPartToRegexString = function(pathPart){
 };
 
 var routeIsMatch = function(req, route){
-    return route.get('regex').test(req.get('url'));
+    var routeMatches = route.get('regex').test(req.get('url'));
+    var methodsMatch = route.get('httpMethod') === req.get('httpMethod');
+    return routeMatches && methodsMatch;
 };
 
 var routeParamsForReq = function(req, route) {

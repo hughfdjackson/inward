@@ -17,7 +17,6 @@ describe('Middleware.pipe', function(){
         };
 
         var middleware = Middleware.pipe([mw1, mw2]);
-
         var withHandler = middleware(_.identity);
 
         withHandler('hi').should.equal('Oh, hi there!!');

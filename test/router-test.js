@@ -45,6 +45,21 @@ describe('Router.match', function(){
         router.match(Get({ url: '/user/abc' })).equals(match).should.be.true;
     });
 
+    it('should pick the route that has the right method', function(){
+        var router = Router()
+            .add('GET', '/user/:userId', handler)
+            .add('POST', '/user/:userRouteVariation', handler);
+
+        var match = Match({
+            params: I.Map({
+                userId: 'abc'
+            }),
+            handler: handler
+        });
+
+        router.match(Get({ url: '/user/abc' })).equals(match).should.be.true;
+    });
+
     it('should return Router.Match.empty if it can\'t find a route', function(){
         var router = Router()
             .add('GET', '/ticket/:ticketId', handler);
