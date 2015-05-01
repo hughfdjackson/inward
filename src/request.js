@@ -3,11 +3,13 @@
 var I = require('immutable');
 var _ = require('ramda');
 
-var Request = I.Record({
-    headers: I.Map({}),
-    url: '',
-    httpMethod: 'unknown'
-});
+var Request = function() {
+    return I.Map({
+        headers: I.Map({}),
+        url: '',
+        httpMethod: 'unknown'
+    });
+};
 
 var withDefaults = _.curry(function(record, defaults, opts) {
     return record(defaults).merge(opts);
