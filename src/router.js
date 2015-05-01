@@ -44,15 +44,13 @@ Router.prototype.match = function(req) {
 var pathToRegex = function(path){
     var pathRegexString = path
         .split('/')
-        .map(pathPartToRegexString)
+        .map(function(pathPart){
+            if (pathPart.indexOf(':') === 0) return '([^\\/]*)';
+            else                             return pathPart;
+        })
         .join('\\/');
 
     return new RegExp('^' + pathRegexString + '$');
-};
-
-var pathPartToRegexString = function(pathPart){
-    if (pathPart.indexOf(':') === 0) return '([^\\/]*)';
-    else                             return pathPart;
 };
 
 var routeIsMatch = function(req, route){
