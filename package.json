@@ -15,7 +15,8 @@
   "author": "hughfdjackson",
   "license": "MIT",
   "dependencies": {
-    "immutable": "3.7.2"
+    "immutable": "3.7.2",
+    "ramda": "^0.13.0"
   },
   "devDependencies": {
     "chai": "2.3.0",

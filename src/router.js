@@ -11,23 +11,15 @@ var Route = I.Record({
     regex: new RegExp('')
 });
 
-var pathToRegex = function(path){
-    var pathRegexString = path
-        .split('/')
-        .map(pathPartToRegexString)
-        .join('\\/');
+var Match = I.Record({
+    handler: function(){},
+    params: I.Map()
+});
 
-    return new RegExp('^' + pathRegexString + '$');
-};
-
-var pathPartToRegexString = function(pathPart){
-    if (pathPart.indexOf(':') === 0) return '([^\\/]*)';
-    else                             return pathPart;
-};
-
-
+Match.empty = Match();
 
 var Router = function(routes){
+    if (!this instanceof Router) return new Router(routes);
     this.routes = routes;
 };
 
@@ -42,9 +34,25 @@ Router.prototype.add = function(method, path, handler){
     return new Router(this.routes.push(route));
 };
 
-Router.prototype.route = function(req) {
+Router.prototype.match = function(req) {
     var route = this.routes.findLast(routeIsMatch.bind(null, req));
-    if (route) return route.get('handler')(req, routeParamsForReq(req, route));
+
+    if (!route) return Match.empty;
+    else        return Match({ params: routeParamsForReq(req, route), handler: route.get('handler') });
+};
+
+var pathToRegex = function(path){
+    var pathRegexString = path
+        .split('/')
+        .map(pathPartToRegexString)
+        .join('\\/');
+
+    return new RegExp('^' + pathRegexString + '$');
+};
+
+var pathPartToRegexString = function(pathPart){
+    if (pathPart.indexOf(':') === 0) return '([^\\/]*)';
+    else                             return pathPart;
 };
 
 var routeIsMatch = function(req, route){
@@ -67,6 +75,7 @@ var routeParamsForReq = function(req, route) {
 };
 
 
-
-
-module.exports = function(){ return new Router(I.List()) };
+module.exports = {
+    Router: function(){ return new Router(I.List()) },
+    Match: Match
+};

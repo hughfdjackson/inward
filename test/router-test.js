@@ -1,67 +1,54 @@
 'use strict';
 
-var Router = require('../src/router');
+var Router = require('../src/router').Router;
+var Match = require('../src/router').Match;
 var Request = require('../src/request');
-var I = require('immutable');
+var Get = Request.Get;
 
-var sinon = require('sinon');
+var I = require('immutable');
+var _ = require('ramda');
+
 var chai = require('chai');
 
 chai.should();
 
-describe('Router', function(){
-    var response = I.Map();
-    var handle = function(){ return response };
+describe('Router.match', function(){
+    var handler = _.identity;
 
-    it('should handle an incoming request', function(){
-        var spy = sinon.spy(handle);
+    it('should return the matching route handler + matched params', function(){
         var router = Router()
-            .add('GET', '/index.js', spy);
+            .add('GET', '/user/:userId', handler)
+            .add('GET', '/ticket/:ticketId', handler);
 
-        var req = Request({
-            url: '/index.js',
-            httpMethod: 'GET'
+        var match = Match({
+            params: I.Map({
+                userId: 'abc'
+            }),
+            handler: handler
         });
 
-        router.route(req).should.equal(response);
-
-        spy.calledWith(req).should.be.true;
+        router.match(Get({ url: '/user/abc' })).equals(match).should.be.true;
     });
 
-    it('should handle parameters, returning a map of them', function(){
-        var spy = sinon.spy(handle);
+    it('matching ruotes should mask in the order they are applied', function(){
         var router = Router()
-            .add('GET', '/hi/:name', spy);
+            .add('GET', '/user/:userId', handler)
+            .add('GET', '/user/:userRouteVariation', handler);
 
-        var req = I.Map({
-            url: '/hi/helen',
-            httpMethod: 'GET'
+        var match = Match({
+            params: I.Map({
+                userRouteVariation: 'abc'
+            }),
+            handler: handler
         });
 
-        router.route(req).should.equal(response);
-
-        spy.calledWith(req, I.Map({ name: 'helen' })).should.be.true;
+        router.match(Get({ url: '/user/abc' })).equals(match).should.be.true;
     });
 
-    it('should write over previous handlers with the new handler', function(){
-        var spy1 = sinon.spy();
-        var spy2 = sinon.spy(handle);
-
+    it('should return Router.Match.empty if it can\'t find a route', function(){
         var router = Router()
-            .add('GET', '/hi/:name', spy1)
-            .add('GET', '/hi/:name', spy2);
+            .add('GET', '/ticket/:ticketId', handler);
 
-        var req = I.Map({
-            url: '/hi/helen',
-            httpMethod: 'GET'
-        });
-
-        router.route(req).should.equal(response);
-
-        spy1.notCalled.should.be.true;
-        spy2.calledWith(req, I.Map({ name: 'helen' })).should.be.true;
+        router.match(Get({ url: '/user/100' })).should.equal(Match.empty);
     });
-
-    it('should supply GET, POST, PUT, DELETE, PATCH, HEAD, OPTION, DELETE sugar', function(){});
-
 });
