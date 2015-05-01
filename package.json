@@ -1,0 +1,25 @@
+{
+  "name": "inward",
+  "version": "0.1.0",
+  "description": "HTTP server, using promises and immutable objects.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha test"
+  },
+  "keywords": [
+    "immutable",
+    "http",
+    "server",
+    "promise"
+  ],
+  "author": "hughfdjackson",
+  "license": "MIT",
+  "dependencies": {
+    "immutable": "3.7.2"
+  },
+  "devDependencies": {
+    "chai": "2.3.0",
+    "mocha": "2.2.4",
+    "sinon": "^1.14.1"
+  }
+}
