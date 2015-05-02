@@ -13,21 +13,22 @@ require('chai').should();
 var port = 3000;
 
 describe('Server', function(){
+
+    var helloWorldHandler = function(request){
+        return Response.Ok({
+            body: 'hello, ' + request.getIn(['params', 'name'])
+        });
+    };
+
     it('should respond to hello-world', function(){
-        var helloRoute = Route.Get('/hello/:name', function(request){
-            console.log(request);
-            return Response.Ok({
-                body: 'hi, ' + request.get(['params', 'name'])
-            });
-        });
-
         var server = Inward.Server({
-            routes: I.List.of(helloRoute)
+            routes: Inward.Routes([
+                Route.Get('/hello/:name', helloWorldHandler)
+            ])
         });
-
         Inward.runWith(server, http.createServer, port);
 
         return request('http://localhost:' + port + '/hello/world')
             .then(function(body){ body.should.equal('hello, world') })
-    })
+    });
 });

@@ -8,11 +8,12 @@ var withDefaults = _.curry(function(record, defaults, opts) {
 });
 
 var Response = I.Record({
-    httpStatus: undefined,
+    statusCode: undefined,
+    statusMessage: '',
     headers: I.Map({}),
     body: ''
 });
 
-Response.Ok = withDefaults(Response, { httpStatus: 200 });
+Response.Ok = withDefaults(Response, { statusCode: 200, statusMessage: 'OK' });
 
 module.exports = Response;

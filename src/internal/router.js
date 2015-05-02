@@ -11,7 +11,7 @@ var routeIsMatch = _.curry(function(req, route){
 });
 
 var routeParamsForReq = function(req, route) {
-    var reqParts   = req.get('url').split('/');
+    var reqParts   = req.get('path').split('/');
     var routeParts = route.get('path').split('/');
 
     var params = {};

@@ -4,8 +4,6 @@ var I = require('immutable');
 var _ = require('ramda');
 
 var router = require('./internal/router');
-
-var findRoute = router.findRoute;
 var Request = require('./internal/request');
 
 var handleRequest = _.curry(function(server, req, res){
@@ -16,16 +14,14 @@ var handleRequest = _.curry(function(server, req, res){
     });
 
     var routes = server.get('routes');
-    var route = findRoute(request, routes);
+    var route = router.findRoute(request, routes);
+    var params = router.routeParamsForReq(request, route);
+
     var handler = route.get('handler');
-    var result = handler(request);
+    var result = handler(request.set('params', params));
 
-    console.log(result)
-
-    res.writeHead(result.get('statusCode'), result.get('headers').toJS());
-    res.send(result.get('body'));
-
-    res.end();
+    res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
+    res.end(result.get('body'));
 });
 
 var runWith = _.curry(function(server, makeNodeServer, port){
@@ -41,5 +37,6 @@ module.exports = {
     runWith: runWith,
     Server: Server,
     Response: require('./response'),
-    Route: require('./route')
+    Route: require('./route'),
+    Routes: I.List
 };
