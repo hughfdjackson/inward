@@ -14,6 +14,12 @@ var Response = I.Record({
     body: ''
 });
 
-Response.Ok = withDefaults(Response, { statusCode: 200, statusMessage: 'OK' });
+Response.Ok = function(body) {
+    return Response({
+        statusCode: 200,
+        statusMessage: 'Ok',
+        body: body
+    });
+};
 
 module.exports = Response;

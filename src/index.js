@@ -6,23 +6,44 @@ var _ = require('ramda');
 var router = require('./internal/router');
 var Request = require('./internal/request');
 
+var Promise = require('es6-promise-polyfill').Promise;
+
 var handleRequest = _.curry(function(server, req, res){
+    var body = bufferBody(req);
+
     var request = Request({
         headers: I.fromJS(req.headers),
         path: req.url,
         method: req.method
     });
-
-    var routes = server.get('routes');
+    var routes = I.List(server.get('routes'));
     var route = router.findRoute(request, routes);
     var params = router.routeParamsForReq(request, route);
-
     var handler = route.get('handler');
-    var result = handler(request.set('params', params));
 
-    res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
-    res.end(result.get('body'));
+    body.then(function(data){
+        return request
+            .set('params', params)
+            .set('body', data);
+        })
+        .then(function(updatedRequest) {
+            return handler(updatedRequest);
+        })
+        .then(function(result) {
+            res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
+            res.end(result.get('body'));
+        });
 });
+
+var bufferBody = function(req){
+    return new Promise(function(resolve, reject){
+        var data = '';
+        req.on('data', function(chunk){ data += chunk });
+        req.on('end', function(){ resolve(data) });
+
+        req.on('error', reject);
+    });
+};
 
 var runWith = _.curry(function(server, makeNodeServer, port){
     makeNodeServer(handleRequest(server)).listen(port);
