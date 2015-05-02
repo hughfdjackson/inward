@@ -1,8 +1,8 @@
 'use strict';
 
-var Router = require('../src/router').Router;
-var Match = require('../src/router').Match;
-var Request = require('../src/request');
+var Router = require('..').Router.Router;
+var Match = require('..').Router.Match;
+var Request = require('../../src/internal/request');
 var Get = Request.Get;
 
 var I = require('immutable');
