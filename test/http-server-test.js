@@ -15,6 +15,10 @@ require('chai').should();
 
 var port = 3000;
 
+var url = function(suffix){
+    return 'http://localhost:' + port + suffix
+};
+
 describe('Server', function(){
     var echoBodyHandler = function(request) {
         return Response.Ok(request.get('body'));
@@ -37,20 +41,20 @@ describe('Server', function(){
 
 
     it('should ping when ponged', function(){
-        return request('http://localhost:' + port + '/ping')
+        return request(url('/ping'))
             .then(function(body){ body.should.equal('pong') })
     });
 
     it('should respond to /hello/{name} with the "hello, {name}"', function(){
         var name = 'foobar';
-        return request('http://localhost:' + port + '/hello/' + name)
+        return request(url('/hello/' + name))
             .then(function(body){ body.should.equal('hello, ' + name) });
     });
 
     it('should echo a posted string', function(){
         var payload = 'this is an example payload';
         return request({
-            uri: 'http://localhost:' + port + '/echo',
+            uri: url('/echo'),
             method: 'POST',
             headers: { 'ContentType': 'text/plain' },
             body: payload
@@ -61,7 +65,7 @@ describe('Server', function(){
     it('should echo a put string', function(){
         var payload = 'this is an example payload';
         return request({
-            uri: 'http://localhost:' + port + '/echo',
+            uri: url('/echo'),
             method: 'PUT',
             headers: { 'ContentType': 'text/plain' },
             body: payload
@@ -70,8 +74,7 @@ describe('Server', function(){
     });
 
     it('should handle asynchronous handler computation', function(){
-        return request('http://localhost:' + port + '/ping/async')
+        return request(url('/ping/async'))
             .then(function(body){ body.should.equal('pong') });
     });
-
 });
