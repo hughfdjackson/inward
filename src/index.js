@@ -5,6 +5,7 @@ var _ = require('ramda');
 
 var routing = require('./internal/routing');
 var Request = require('./internal/request');
+var Server = require('./server');
 
 var Promise = require('es6-promise-polyfill').Promise;
 
@@ -55,19 +56,10 @@ var runWith = _.curry(function(server, makeNodeServer, port){
     makeNodeServer(handler).listen(port);
 });
 
-var defaultMiddlware = _.curry(function(fn, req){ return fn(req) });
-
-var Server = I.Record({
-    routes: I.List(),
-    middleware: defaultMiddlware
-});
-
-Server.defaultMiddleware = defaultMiddlware;
 
 module.exports = {
     runWith: runWith,
-    Server: Server,
+    Server: require('./server'),
     Response: require('./response'),
-    Route: require('./route'),
-    Routes: I.List
+    Route: require('./route')
 };
