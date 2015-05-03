@@ -19,19 +19,22 @@ var handleRequest = _.curry(function(server, req, res){
     var routes = I.List(server.get('routes'));
     var route = router.findRoute(request, routes);
     var params = router.routeParamsForReq(request, route);
-    var handler = route.get('handler');
+    var middleware = server.get('middleware');
+    var handler = middleware(_.pipe(route.get('handler'), Promise.resolve.bind(Promise)));
+
 
     body.then(function(data){
         return request
             .set('params', params)
             .set('body', data);
         })
-        .then(function(updatedRequest) {
-            return handler(updatedRequest);
-        })
+        .then(handler)
         .then(function(result) {
             res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
             res.end(result.get('body'));
+        })
+        .catch(function(error){
+            setImmediate(function(){ throw error; });
         });
 });
 

@@ -1,7 +1,6 @@
 'use strict';
 
 var Inward = require('..');
-var I = require('immutable');
 var Response = Inward.Response;
 var Route = Inward.Route;
 
@@ -24,7 +23,17 @@ describe('Server', function(){
         return Response.Ok(request.get('body'));
     };
 
+    var jsonMiddleware = _.curry(function(fn, req){
+        return fn(req)
+            .then(function(response){
+                if (response.getIn(['headers', 'content-type']) === 'application/json')
+                    return response.update('body', JSON.stringify);
+                else return response;
+            });
+    });
+
     var server = Inward.Server({
+        middleware: jsonMiddleware,
         routes: [
             Route.Get('/ping', _.always(Response.Ok('pong'))),
             Route.Get('/ping/async', _.always(Promise.resolve(Response.Ok('pong')))),
@@ -32,6 +41,10 @@ describe('Server', function(){
             Route.Get('/hello/:name', function(request){
                 return Response.Ok('hello, ' + request.getIn(['params', 'name']))
             }),
+
+            Route.Get('/json-response', _.always(
+                Response.Ok({ x: 10 })
+                    .setIn(['headers', 'content-type'], 'application/json'))),
 
             Route.Post('/echo', echoBodyHandler),
             Route.Put('/echo', echoBodyHandler)
@@ -67,7 +80,7 @@ describe('Server', function(){
         return request({
             uri: url('/echo'),
             method: 'PUT',
-            headers: { 'ContentType': 'text/plain' },
+            headers: { 'content-type': 'text/plain' },
             body: payload
         })
             .then(function(body){ body.should.equal(payload) });
@@ -76,5 +89,10 @@ describe('Server', function(){
     it('should handle asynchronous handler computation', function(){
         return request(url('/ping/async'))
             .then(function(body){ body.should.equal('pong') });
+    });
+
+    it('should apply server-level middleware', function(){
+        return request(url('/json-response'))
+            .then(function(body){ JSON.parse(body).should.eql({ x: 10 }) })
     });
 });
