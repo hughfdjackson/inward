@@ -9,10 +9,15 @@ var Match = I.Record({
 });
 
 var matchRoute = _.curry(function(routes, request){
-    var route = routes.findLast(routeMatches(request));
+    var pathAndQS = request.get('path').split('?');
+    var requestWithQS = request
+        .set('path', pathAndQS[0])
+        .set('queryString', pathAndQS[1] || '');
+
+    var route = routes.findLast(routeMatches(requestWithQS));
     if ( !route ) return undefined;
 
-    var requestWithParams = request.set('params', params(request, route));
+    var requestWithParams = requestWithQS.set('params', params(request, route));
 
     return Match({
         request: requestWithParams,

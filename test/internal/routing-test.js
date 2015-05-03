@@ -6,6 +6,8 @@ var Match = routing.Match;
 var Route = require('../..').Route;
 var Server = require('../..').Server;
 
+var qs = require('querystring');
+
 var _ = require('ramda');
 var I = require('immutable');
 
@@ -16,21 +18,30 @@ var should = require('chai').should();
 
 describe('routing.runRoute', function(){
 
-    var arbitraryRequest = jsverify.record({
-        method: jsverify.elements(['GET', 'PUT', 'POST', 'DELETE', 'OPTION', 'HEAD']),
-        path: jsverify.asciistring
-    }).smap(Request, function(request){
-        return { path: request.get('path'), method: request.get('method') };
+    var arbitraryPathPart = jsverify.suchthat(jsverify.asciistring, function(s){
+        return s.indexOf('/') === -1
+            && s.indexOf('?') === -1
     });
 
-    var arbitraryPathPart = jsverify.suchthat(jsverify.asciistring, function(s){ return s.indexOf('/') === -1 });
+    var arbitraryRequest = jsverify.record({
+            method: jsverify.elements(['GET', 'PUT', 'POST', 'DELETE', 'OPTION', 'HEAD']),
+            path: jsverify.suchthat(jsverify.asciistring, function(s){ return s.indexOf('?') === - 1})
+        })
+        .smap(Request, function(request){
+            return { path: request.get('path'), method: request.get('method') }
+        });
+
     var arbitraryAlphaNum = jsverify.elements('qwertyuiopasdfghjklzxcvbnm1234567890'.split(''));
 
     var arbitraryRoutePathPart = jsverify.suchthat(jsverify.asciistring, function(s){
         return s.indexOf('/') === -1
             && s.indexOf(':') === -1
             && s.indexOf('*') === -1
+            && s.indexOf('?') === -1
     });
+
+    var arbitraryQueryString = jsverify.dict(jsverify.asciistring)
+        .smap(qs.stringify, qs.parse);
 
     property('should return undefined when there are no routes', arbitraryRequest, function(req){
         var routes = routing.routesFromArray([]);
@@ -86,4 +97,15 @@ describe('routing.runRoute', function(){
 
         return routing.matchRoute(routes, req).equals(Match({ request: resultReq, handler: _.identity }));
     });
+
+    property('should match querystring, and (by default) provide it as a string', arbitraryRequest, arbitraryQueryString, function(req, queryString){
+        var resultReq = req.set('queryString', queryString);
+        var reqWithQS = req.update('path', function(p){ return p + '?' + queryString });
+
+        var routes = routing.routesFromArray([
+            Route.Any('*', _.identity)
+        ]);
+
+        return routing.matchRoute(routes, reqWithQS).equals(Match({ request: resultReq, handler: _.identity }));
+    })
 });

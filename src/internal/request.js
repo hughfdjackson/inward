@@ -11,6 +11,7 @@ var Request = withDefaults(I.Map, {
     headers: I.Map({}),
     params: I.Map({}),
     path: '',
+    queryString: '',
     method: ''
 });
 
