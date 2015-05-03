@@ -3,7 +3,6 @@
 var I = require('immutable');
 var _ = require('ramda');
 
-
 var Match = I.Record({
     handler: null,
     request: null

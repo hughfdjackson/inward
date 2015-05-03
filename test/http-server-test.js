@@ -20,7 +20,7 @@ var url = function(suffix){
 
 describe('Server', function(){
     var echoBodyHandler = function(request) {
-        return Response.Ok(request.get('body'));
+        return Response.OK(request.get('body'));
     };
 
     var jsonMiddleware = _.curry(function(fn, req){
@@ -35,21 +35,21 @@ describe('Server', function(){
     var server = Inward.Server({
         middleware: jsonMiddleware,
         routes: [
-            Route.Get('/ping', _.always(Response.Ok('pong'))),
-            Route.Get('/ping/async', _.always(Promise.resolve(Response.Ok('pong')))),
+            Route.Get('/ping', _.always(Response.OK('pong'))),
+            Route.Get('/ping/async', _.always(Promise.resolve(Response.OK('pong')))),
 
             Route.Get('/hello/:name', function(request){
-                return Response.Ok('hello, ' + request.getIn(['params', 'name']))
+                return Response.OK('hello, ' + request.getIn(['params', 'name']))
             }),
 
             Route.Get('/json-response', _.always(
-                Response.Ok({ x: 10 })
+                Response.OK({ x: 10 })
                     .setIn(['headers', 'content-type'], 'application/json'))),
 
             Route.Post('/echo', echoBodyHandler),
             Route.Put('/echo', echoBodyHandler),
 
-            Route.Any('/any-pong', _.always(Response.Ok('pong')))
+            Route.Any('/any-pong', _.always(Response.OK('pong')))
         ]
     });
     Inward.runWith(server, http.createServer, port);
