@@ -2,6 +2,7 @@
 
 var I = require('immutable');
 var _ = require('ramda');
+var escapeRegex = require('escape-regexp');
 
 var Route = I.Record({
     method: '',
@@ -17,7 +18,8 @@ var pathToRegex = function(path){
         .split('/')
         .map(function(pathPart){
             if (pathPart.indexOf(':') === 0) return '([^\\/]*)';
-            else                             return pathPart;
+            else if (pathPart === '*')       return '(.*)';
+            else                             return escapeRegex(pathPart);
         })
         .join('\\/');
 
@@ -40,6 +42,6 @@ module.exports = {
     Delete : route('DELETE'),
     Option : route('OPTION'),
     Head   : route('HEAD'),
-    Any    : route(/.*/),
+    Any    : route('*'),
     Custom : route
 };

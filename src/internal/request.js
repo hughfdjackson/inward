@@ -9,13 +9,9 @@ var withDefaults = _.curry(function(record, defaults, opts) {
 
 var Request = withDefaults(I.Map, {
     headers: I.Map({}),
+    params: I.Map({}),
     path: '',
     method: ''
 });
-
-Request.Get = withDefaults(Request, { method: 'GET' });
-Request.Put = withDefaults(Request, { method: 'PUT' });
-Request.Post = withDefaults(Request, { method: 'POST' });
-Request.Delete = withDefaults(Request, { method: 'DELETE' });
 
 module.exports = Request;

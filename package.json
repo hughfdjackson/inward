@@ -4,7 +4,7 @@
   "description": "HTTP server, using promises and immutable objects.",
   "main": "src/index.js",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha test"
+    "test": "node ./node_modules/mocha/bin/mocha test --recursive"
   },
   "keywords": [
     "immutable",
@@ -16,11 +16,13 @@
   "license": "MIT",
   "dependencies": {
     "es6-promise-polyfill": "1.0.0",
+    "escape-regexp": "0.0.1",
     "immutable": "3.7.2",
     "ramda": "0.13.0"
   },
   "devDependencies": {
     "chai": "2.3.0",
+    "jsverify": "^0.6.0-alpha.5",
     "mocha": "2.2.4",
     "request-promise": "0.4.2",
     "sinon": "1.14.1"
