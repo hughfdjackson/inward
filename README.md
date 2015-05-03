@@ -13,13 +13,15 @@ var Route = Inward.Route;
 
 var http = require('http');
 
-var helloRoute = Route.Get('/hello/:name', function(request){
+var helloWorldHandler = function(request){
     var params = request.get('params');
-    return Response.Ok('hi, ' + params.get('name')); 
-});
+    return Response.OK('hi, ' + params.get('name')); 
+};
 
 var server = Server({
-    routes: [helloRoute]
+    routes: [
+        Route.Get('/hello/:name', helloWorldHandler)
+    ]
 });
 
 Inward.runWith(server, http.createServer, 8080);
