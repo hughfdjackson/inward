@@ -47,7 +47,9 @@ describe('Server', function(){
                     .setIn(['headers', 'content-type'], 'application/json'))),
 
             Route.Post('/echo', echoBodyHandler),
-            Route.Put('/echo', echoBodyHandler)
+            Route.Put('/echo', echoBodyHandler),
+
+            Route.Any('/any-pong', _.always(Response.Ok('pong')))
         ]
     });
     Inward.runWith(server, http.createServer, port);
@@ -94,5 +96,18 @@ describe('Server', function(){
     it('should apply server-level middleware', function(){
         return request(url('/json-response'))
             .then(function(body){ JSON.parse(body).should.eql({ x: 10 }) })
+    });
+
+    it('should reply to any method supported by standard http lib, except special cases, if it has an Any handler', function(){
+        var assertPong = function(method) {
+            return request({
+                method: method,
+                url: url('/any-pong')
+            }).then(function(body){ body.should.equal('pong') });
+        };
+        var specialCaseExclusions = ['HEAD', 'OPTION', 'CONNECT'];
+        var methodsCaughtByAny = _.difference(http.METHODS, specialCaseExclusions);
+
+        return Promise.all(methodsCaughtByAny.map(assertPong));
     });
 });
