@@ -1,12 +1,4 @@
-# Inward
-
-HttpServer - handling inbound requests with Promises and Immutable.js.
- 
-
-## Hello World
-
-```javascript
-var Inward = require('inward');
+var Inward = require('..');
 var Response = Inward.Response;
 var Route = Inward.Route;
 
@@ -24,5 +16,3 @@ var server = Inward.Server({
 });
 
 Inward.runWith(server, http.createServer, 3000);
-```
-

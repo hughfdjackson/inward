@@ -37,6 +37,15 @@ var pathMatches = function(request, route) {
     return route.get('regex').test(request.get('path'));
 };
 
+
+var params = function(request, route) {
+    var names = paramNames(route);
+    var values = paramValues(request, route);
+    var paramsObject= _.zipObj(names, values)
+
+    return I.Map(paramsObject);
+};
+
 var paramNames = function(route){
     return route.get('path')
         .split('/')
@@ -50,13 +59,6 @@ var paramValues = function(request, route) {
         .slice(1);
 };
 
-var params = function(request, route) {
-    var names = paramNames(route);
-    var values = paramValues(request, route);
-    var paramsObject= _.zipObj(names, values)
-
-    return I.Map(paramsObject);
-};
 
 var routesFromArray = I.List;
 

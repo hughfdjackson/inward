@@ -107,5 +107,5 @@ describe('routing.runRoute', function(){
         ]);
 
         return routing.matchRoute(routes, reqWithQS).equals(Match({ request: resultReq, handler: _.identity }));
-    })
+    });
 });
