@@ -26,6 +26,18 @@ describe('Middleware.wrap', function(){
 
         return Promise.all([handler, nonPromiseHandler].map(testWrap));
     });
+
+    it('should properly wrap a non-promise returning handler with a promise', function(){
+        var middleware = Middleware.wrap(function(fn, val){
+            return fn(val)
+                .then(function(v){ return v + 1 });
+        });
+
+        return middleware(_.always(1))(undefined)
+            .then(function(result){ result.should.equal(2) })
+
+    });
+
 });
 
 describe('Middleware.after', function(){
@@ -61,14 +73,6 @@ describe('Middleware.before', function(){
 
 describe('Middleware.pipe', function(){
     it('should pipe together multiple middleware steps', function(){
-
-        var testPipe = function(handler){
-            return middleware(handler)(initialValue)
-                .then(function(result){
-                    result.should.equal(double(plus1(double(initialValue))));
-                });
-        };
-
         var double = function(a){ return a * 2 };
         var plus1  = function(a){ return a + 1 };
         var doubleM = Middleware.after(double);
@@ -76,6 +80,13 @@ describe('Middleware.pipe', function(){
 
         var middleware = Middleware.pipe([doubleM, plus1M, doubleM]);
         var initialValue = 10;
+
+        var testPipe = function(handler){
+            return middleware(handler)(initialValue)
+                .then(function(result){
+                    result.should.equal(double(plus1(double(initialValue))));
+                });
+        };
 
         return Promise.all([handler, nonPromiseHandler].map(testPipe));
     });

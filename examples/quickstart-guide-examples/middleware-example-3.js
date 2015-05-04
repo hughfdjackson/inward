@@ -7,16 +7,21 @@ var isoDate = function(){
     return (new Date()).toISOString();
 };
 
-// We want the middleware to run *before* the handler runs,
-// so we'll use the `before` helper function.
-var accessLogging = Middleware.before(function(request){
-    var logString = [isoDate(), request.get('method'), request.get('path')].join(' ');
-    console.log(logString);
+var accessLogging = Middleware.wrap(function(handler, request){
+    var startTime = Date.now();
 
-    // we leave the request untouched - just pass it on to the next processing step
-    return request;
+    return handler(request)
+        .then(function(response){
+            var timeRequestHasTaken = Date.now() - startTime;
+            var logString = [isoDate(), request.get('path'),
+                             response.get('statusCode'), response.get('statusMessage'),
+                             timeRequestHasTaken + 'ms'].join(' ');
+
+            console.log(logString);
+
+            return response;
+        });
 });
-
 
 var pingPongHandler = function(request) {
     return Response.OK('pong');

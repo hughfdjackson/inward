@@ -1,4 +1,3 @@
-var http = require('http');
 var Inward = require('../..');
 var Response = Inward.Response; // contains constructors to use in our route handler
 var Route = Inward.Route; // contains constructors for creating routes

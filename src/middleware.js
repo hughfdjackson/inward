@@ -4,7 +4,11 @@ var _ = require('ramda');
 var Promise = require('es6-promise-polyfill').Promise;
 
 var wrap = _.curry(function(wrapper, fn, val) {
-    return wrapper(_.compose(fn, Promise.resolve.bind(Promise)), val);
+    var handler = function(v) {
+        return Promise.resolve(fn(v));
+    };
+
+    return wrapper(handler, val);
 });
 
 var after = _.curry(function(after, fn, val){

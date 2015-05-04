@@ -1,4 +1,3 @@
-var http = require('http');
 var Inward = require('../..');
 var Response = Inward.Response; // contains constructors to use in our route handler
 var Route = Inward.Route; // contains constructors for creating routes
@@ -9,7 +8,9 @@ var isoDate = function(){
 };
 
 var accessLogging = Middleware.after(function(response){
-    console.log(isoDate() + ':' + response.get('statusCode') + ' ' + response.get('statusMessage'));
+    var logString = [isoDate(), response.get('statusCode'), response.get('statusMessage')].join(' ');
+    console.log(logString);
+
     return response;
 });
 
