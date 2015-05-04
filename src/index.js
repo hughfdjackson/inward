@@ -7,8 +7,10 @@ var _ = require('ramda');
 var routing = require('./internal/routing');
 var Request = require('./internal/request');
 var Server = require('./server');
+var Response = require('./response');
 
 var Promise = require('es6-promise-polyfill').Promise;
+var default404 = _.always(Response.NotFound(''));
 
 var handleRequest = _.curry(function(server, req, res){
     var request = Request({
@@ -19,18 +21,18 @@ var handleRequest = _.curry(function(server, req, res){
     var middleware = server.get('middleware');
     var routes = server.get('routes');
     var match = routing.matchRoute(routes, request);
-    var handler = function(req) {
-        return Promise
-            .resolve(req)
-            .then(match.get('handler'));
+    var handler = match ? match.get('handler') : default404;
+
+    request = match ? match.get('request') : request;
+
+    var promiseWrappedHandler = function(req) {
+        return Promise.resolve(req).then(handler);
     };
 
     bufferBody(req).then(function(data){
-            var reqWithBody = match
-                .get('request')
-                .set('body', data);
+            var reqWithBody = request.set('body', data);
 
-            return middleware(handler, reqWithBody);
+            return middleware(promiseWrappedHandler, reqWithBody);
         })
         .then(function(result) {
             res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());

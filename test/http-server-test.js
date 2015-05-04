@@ -111,4 +111,12 @@ describe('Server', function(){
 
         return Promise.all(methodsCaughtByAny.map(assertPong));
     });
+
+    it('should error gracefully with a 404 if a route is missing', function(){
+        return request(url('/does-not-exist-so-should-404'))
+            .catch(function(error){
+                error.response.statusCode.should.eql(404);
+                error.response.statusMessage.should.eql('Not Found');
+            });
+    });
 });
