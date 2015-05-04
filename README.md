@@ -15,7 +15,7 @@ Promises have become so popular, they've [been penciled in as an official part o
 Using promises and immutable data together in a http server is *also* nothing new - we're just borrowing a leaf out of the playbook of [major frameworks from other languages](https://www.playframework.com/) - frameworks I've used in anger with plenty of success.
 
 Now is the right time.
- 
+
 
 ## Hello World
 
@@ -45,5 +45,10 @@ var server = Inward.Server({
 Inward.runWith(server, http.createServer, 3000);
 ```
 
+## Quick-Start Guide
 
+To get up and running quickly, see [the Quick-Start Guide](https://github.com/hughfdjackson/inward/wiki/QuickStart-Guide);
 
+## API Documentation
+
+For in-depth info for each of the products [API Documentation](https://github.com/hughfdjackson/inward/wiki/API-Documentation)
