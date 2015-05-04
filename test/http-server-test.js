@@ -52,7 +52,8 @@ describe('Server', function(){
             Route.Any('/any-pong', _.always(Response.OK('pong')))
         ]
     });
-    Inward.runWith(server, http.createServer, port);
+
+    Inward.runHttp(server, port);
 
 
     it('should ping when ponged', function(){

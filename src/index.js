@@ -1,5 +1,6 @@
 'use strict';
 
+var http = require('http');
 var I = require('immutable');
 var _ = require('ramda');
 
@@ -48,18 +49,18 @@ var bufferBody = function(req){
     });
 };
 
-var runWith = _.curry(function(server, makeNodeServer, port){
+var runHttp = _.curry(function(server, port){
     var serverWithRouteTree = server.update('routes', routing.routesFromArray);
     var handler = handleRequest(serverWithRouteTree);
 
-    var nodeServer = makeNodeServer(handler);
+    var nodeServer = http.createServer(handler);
 
     nodeServer.listen(port);
     nodeServer.on('error', console.error)
 });
 
 module.exports = {
-    runWith: runWith,
+    runHttp: runHttp,
     Server: require('./server'),
     Response: require('./response'),
     Route: require('./route'),
