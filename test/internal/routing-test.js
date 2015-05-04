@@ -57,11 +57,11 @@ describe('routing.runRoute', function(){
     });
 
 
-    property('one path should shadow the same one later', arbitraryRequest, function(req){
-        var path = req.get('path');
+    property('one path should shadow the same one later', arbitraryRoutePathPart, arbitraryRequest, function(pathPart, req){
+        req = req.set('path', pathPart);
         var routes = routing.routesFromArray([
-            Route.Any(path, _.identity),
-            Route.Any(path, undefined)
+            Route.Any(pathPart, _.identity),
+            Route.Any(pathPart, undefined)
         ]);
 
         return routing.matchRoute(routes, req).equals(Match({ request: req, handler: _.identity }));

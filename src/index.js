@@ -35,9 +35,7 @@ var handleRequest = _.curry(function(server, req, res){
             res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
             res.end(result.get('body'));
         })
-        .catch(function(error){
-            setImmediate(function(){ throw error; });
-        });
+        .catch(console.error);
 });
 
 var bufferBody = function(req){
@@ -64,5 +62,6 @@ module.exports = {
     runWith: runWith,
     Server: require('./server'),
     Response: require('./response'),
-    Route: require('./route')
+    Route: require('./route'),
+    Middleware: require('./middleware')
 };
