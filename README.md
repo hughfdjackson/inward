@@ -6,11 +6,11 @@ Growing node-based apps can be difficult.  Even if your service is just medium s
 
 ### What Tech?
 
-`Inward` uses two main ideas - that immutable data (provided by facebook's [immutable-js](https://github.com/facebook/immutable-js)) makes hard-to-find bugs hard-to-write, and promises make node.js' asynchronous IO less painful for you to use.
+`Inward` uses two main ideas - that immutable data (provided by facebook's [immutable](https://github.com/facebook/immutable-js) library) makes hard-to-find bugs hard-to-write, and promises make node.js' asynchronous IO less painful for you to use.
  
 ### So this is new, cutting edge, risky stuff?
 
-Promises have become so popular, they've [been penciled in as an official part of the next JavaScript spec](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise).  [Immutable.js](https://www.npmjs.com/package/immutable) has facebook's stamp of approval, hundreds of thousands of monthly downloads, and is based on the [same techniques that form the core of clojure's datastructures]().  
+Promises have become so popular, they've [been penciled in as an official part of the next JavaScript spec](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise).  [Immutable](https://www.npmjs.com/package/immutable) has facebook's stamp of approval, hundreds of thousands of monthly downloads, and is based on the same techniques that form the core of clojure's datastructures.  
 
 Using promises and immutable data together in a http server is *also* nothing new - we're just borrowing a leaf out of the playbook of [major frameworks from other languages](https://www.playframework.com/) - frameworks I've used in anger with plenty of success.
 
