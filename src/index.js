@@ -25,11 +25,12 @@ var handleRequest = _.curry(function(server, req, res){
     };
 
     bufferBody(req).then(function(data){
-            return match
+            var reqWithBody = match
                 .get('request')
                 .set('body', data);
+
+            return middleware(handler, reqWithBody);
         })
-        .then(middleware(handler))
         .then(function(result) {
             res.writeHead(result.get('statusCode'), result.get('statusMessage'), result.get('headers').toJS());
             res.end(result.get('body'));
@@ -53,9 +54,11 @@ var runWith = _.curry(function(server, makeNodeServer, port){
     var serverWithRouteTree = server.update('routes', routing.routesFromArray);
     var handler = handleRequest(serverWithRouteTree);
 
-    makeNodeServer(handler).listen(port);
-});
+    var nodeServer = makeNodeServer(handler);
 
+    nodeServer.listen(port);
+    nodeServer.on('error', console.error)
+});
 
 module.exports = {
     runWith: runWith,

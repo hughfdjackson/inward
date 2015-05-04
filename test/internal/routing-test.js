@@ -56,20 +56,31 @@ describe('routing.runRoute', function(){
         return routing.matchRoute(routes, req).equals(Match({ request: req, handler: _.identity }));
     });
 
-    property('one * should shadow the other', arbitraryRequest, function(req){
+
+    property('one path should shadow the same one later', arbitraryRequest, function(req){
+        var path = req.get('path');
         var routes = routing.routesFromArray([
-            Route.Any('*', undefined),
-            Route.Any('*', _.identity)
+            Route.Any(path, _.identity),
+            Route.Any(path, undefined)
         ]);
 
         return routing.matchRoute(routes, req).equals(Match({ request: req, handler: _.identity }));
     });
 
-    property('should match * after a prefix', arbitraryRoutePathPart, arbitraryRequest, function(prefix, req){
+    property('one * should shadow ones that come after', arbitraryRequest, function(req){
+        var routes = routing.routesFromArray([
+            Route.Any('*', _.identity),
+            Route.Any('*', undefined)
+        ]);
+
+        return routing.matchRoute(routes, req).equals(Match({ request: req, handler: _.identity }));
+    });
+
+    property('should use the first matching route', arbitraryRoutePathPart, arbitraryRequest, function(prefix, req){
         req = req.update('path', function(p){ return prefix + '/' + p; });
         var routes = routing.routesFromArray([
-            Route.Any('*', undefined),
-            Route.Any(prefix + '/*', _.identity)
+            Route.Any(prefix + '/*', _.identity),
+            Route.Any('*', undefined)
         ]);
 
         return routing.matchRoute(routes, req).equals(Match({ request: req, handler: _.identity }));

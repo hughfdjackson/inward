@@ -14,7 +14,7 @@ var matchRoute = _.curry(function(routes, request){
         .set('path', pathAndQS[0])
         .set('queryString', pathAndQS[1] || '');
 
-    var route = routes.findLast(routeMatches(requestWithQS));
+    var route = routes.find(routeMatches(requestWithQS));
     if ( !route ) return undefined;
 
     var requestWithParams = requestWithQS.set('params', params(request, route));
@@ -41,7 +41,7 @@ var pathMatches = function(request, route) {
 var params = function(request, route) {
     var names = paramNames(route);
     var values = paramValues(request, route);
-    var paramsObject= _.zipObj(names, values)
+    var paramsObject= _.zipObj(names, values);
 
     return I.Map(paramsObject);
 };

@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "chai": "2.3.0",
-    "jsverify": "^0.6.0-alpha.5",
+    "jsverify": "0.6.0-alpha.5",
     "mocha": "2.2.4",
     "request-promise": "0.4.2",
     "sinon": "1.14.1"
