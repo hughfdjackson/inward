@@ -3,7 +3,11 @@
 var I = require('immutable');
 var _ = require('ramda');
 
-var Response = I.Record({
+var withDefaults = _.curry(function(record, defaults, opts) {
+    return record(defaults).merge(opts);
+});
+
+var Response = withDefaults(I.Map, {
     statusCode: undefined,
     statusMessage: '',
     headers: I.Map({}),

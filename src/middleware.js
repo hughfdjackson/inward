@@ -4,16 +4,16 @@ var _ = require('ramda');
 var Promise = require('es6-promise-polyfill').Promise;
 
 var wrap = _.curry(function(wrapper, fn, val) {
-    return wrapper(fn, val);
+    return wrapper(_.compose(fn, Promise.resolve.bind(Promise)), val);
 });
 
 var after = _.curry(function(after, fn, val){
-    return fn(val).then(after);
+    return Promise.resolve(fn(val)).then(after);
 });
 
 
 var before = _.curry(function(before, fn, val){
-    return Promise.resolve(before(val)).then(fn)
+    return Promise.resolve(before(val)).then(fn);
 });
 
 var pipe = _.curry(function(middlewares, fn, val) {
