@@ -49,4 +49,4 @@ To get up and running quickly, see [the Quick-Start Guide](https://github.com/hu
 
 ## API Documentation
 
-For in-depth info for each of the products [API Documentation](https://github.com/hughfdjackson/inward/wiki/API-Documentation)
+For in-depth info for every function, see the [API Documentation](https://github.com/hughfdjackson/inward/wiki/API-Documentation).
